@@ -1,0 +1,72 @@
+import { describe, it, expect } from 'vitest';
+import { getPhase, getNextRound, createCustomRound, resetRounds } from '../server/rounds.js';
+
+describe('Rounds 모듈', () => {
+  describe('getPhase', () => {
+    it('16명 이상이면 early', () => {
+      expect(getPhase(16)).toBe('early');
+      expect(getPhase(100)).toBe('early');
+    });
+
+    it('6~15명이면 late', () => {
+      expect(getPhase(6)).toBe('late');
+      expect(getPhase(15)).toBe('late');
+    });
+
+    it('5명 이하면 final', () => {
+      expect(getPhase(5)).toBe('final');
+      expect(getPhase(1)).toBe('final');
+    });
+  });
+
+  describe('getNextRound', () => {
+    it('early 페이즈에서 3개 선택지와 20초 제한시간을 반환한다', () => {
+      resetRounds();
+      const round = getNextRound(1, 50, false);
+      expect(round.phase).toBe('early');
+      expect(round.choices).toHaveLength(3);
+      expect(round.timeLimit).toBe(20);
+      expect(round.roundNum).toBe(1);
+    });
+
+    it('late 페이즈에서 2개 선택지와 15초 제한시간을 반환한다', () => {
+      resetRounds();
+      const round = getNextRound(2, 10, false);
+      expect(round.phase).toBe('late');
+      expect(round.choices).toHaveLength(2);
+      expect(round.timeLimit).toBe(15);
+    });
+
+    it('final 페이즈에서 3~4개 선택지와 10초 제한시간을 반환한다', () => {
+      resetRounds();
+      const round = getNextRound(3, 4, false);
+      expect(round.phase).toBe('final');
+      expect(round.choices.length).toBeGreaterThanOrEqual(3);
+      expect(round.choices.length).toBeLessThanOrEqual(4);
+      expect(round.timeLimit).toBe(10);
+    });
+
+    it('sudden_death에서 2개 선택지를 반환한다', () => {
+      resetRounds();
+      const round = getNextRound(10, 3, true);
+      expect(round.phase).toBe('sudden_death');
+      expect(round.choices).toHaveLength(2);
+      expect(round.timeLimit).toBe(10);
+    });
+  });
+
+  describe('createCustomRound', () => {
+    it('커스텀 선택지로 라운드를 생성한다', () => {
+      const round = createCustomRound(5, ['A', 'B', 'C'], 20);
+      expect(round.choices).toEqual(['A', 'B', 'C']);
+      expect(round.roundNum).toBe(5);
+      expect(round.phase).toBe('early');
+    });
+  });
+
+  describe('resetRounds', () => {
+    it('에러 없이 리셋된다', () => {
+      expect(() => resetRounds()).not.toThrow();
+    });
+  });
+});

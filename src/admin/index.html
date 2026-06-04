@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>소수결 서바이벌 - 어드민</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #0f0f23; color: #eee; font-family: 'Segoe UI', sans-serif; padding: 20px; }
+    h1 { font-size: 24px; margin-bottom: 20px; }
+    .status-panel { background: #1a1a2e; padding: 16px; border-radius: 8px; margin-bottom: 20px; }
+    .status-panel p { font-size: 18px; margin: 8px 0; }
+    .controls { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; }
+    .btn {
+      padding: 14px 24px; font-size: 16px; font-weight: bold; border: none;
+      border-radius: 8px; cursor: pointer;
+    }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-green { background: #4ecdc4; color: #1a1a2e; }
+    .btn-blue { background: #45b7d1; color: #1a1a2e; }
+    .btn-yellow { background: #ffd93d; color: #1a1a2e; }
+    .btn-red { background: #ff6b6b; color: #fff; }
+    .custom-input { margin-top: 20px; background: #1a1a2e; padding: 16px; border-radius: 8px; }
+    .custom-input input {
+      width: 100%; padding: 12px; font-size: 16px; background: #16213e;
+      border: 1px solid #333; color: #eee; border-radius: 6px; margin-bottom: 8px;
+    }
+    .custom-input label { font-size: 14px; color: #aaa; }
+  </style>
+</head>
+<body>
+  <h1>🎮 소수결 서바이벌 - 운영자 패널</h1>
+  <div class="status-panel" id="status"></div>
+  <div class="controls" id="controls"></div>
+  <div class="custom-input">
+    <label>즉석 선택지 (콤마로 구분)</label>
+    <input type="text" id="customChoices" placeholder="선택지1, 선택지2, 선택지3">
+  </div>
+  <script type="module" src="./main.ts"></script>
+</body>
+</html>

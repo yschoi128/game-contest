@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>소수결 서바이벌 - 프로젝터</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #1a1a2e;
+      color: #eee;
+      font-family: 'Segoe UI', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    #app { width: 100%; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px; }
+    .title { font-size: 64px; font-weight: bold; margin-bottom: 20px; }
+    .subtitle { font-size: 36px; color: #aaa; margin-bottom: 40px; }
+    .count { font-size: 120px; font-weight: bold; color: #4ecdc4; }
+    .timer { font-size: 160px; font-weight: bold; color: #ff6b6b; }
+    .choices { display: flex; gap: 40px; margin: 40px 0; }
+    .choice-bar { display: flex; flex-direction: column; align-items: center; min-width: 200px; }
+    .choice-label { font-size: 32px; margin-bottom: 10px; text-align: center; }
+    .bar-container { width: 100px; height: 300px; background: #333; border-radius: 10px; position: relative; overflow: hidden; display: flex; align-items: flex-end; }
+    .bar-fill { width: 100%; background: #4ecdc4; border-radius: 0 0 10px 10px; transition: height 0.3s; }
+    .bar-count { font-size: 48px; font-weight: bold; margin-top: 10px; }
+    .blind-text { font-size: 64px; color: #ff6b6b; }
+    .result-section { text-align: center; }
+    .survivors-text { font-size: 72px; font-weight: bold; color: #4ecdc4; margin: 20px 0; }
+    .eliminated-text { font-size: 36px; color: #ff6b6b; }
+    .winner-name { font-size: 120px; font-weight: bold; color: #ffd93d; text-shadow: 0 0 30px #ffd93d; }
+    .phase-badge { font-size: 28px; padding: 8px 20px; border-radius: 20px; background: #333; margin-bottom: 20px; }
+    .round-num { font-size: 48px; color: #aaa; margin-bottom: 10px; }
+    .nicknames { font-size: 24px; color: #888; max-width: 80%; text-align: center; line-height: 1.8; }
+    .invalid-msg { font-size: 48px; color: #ffd93d; }
+    .paused { font-size: 64px; color: #ff6b6b; animation: blink 1s infinite; }
+    @keyframes blink { 50% { opacity: 0.3; } }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+  <script type="module" src="./main.ts"></script>
+</body>
+</html>

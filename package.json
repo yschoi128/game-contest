@@ -1,0 +1,26 @@
+{
+  "name": "minority-survival",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev:server": "tsx server/index.ts",
+    "build": "vite build",
+    "start": "tsx server/index.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "express": "4.21.2",
+    "ws": "8.18.0"
+  },
+  "devDependencies": {
+    "@types/express": "4.17.21",
+    "@types/node": "20.14.0",
+    "@types/ws": "8.5.13",
+    "tsx": "4.19.2",
+    "typescript": "5.4.5",
+    "vite": "5.4.14",
+    "vitest": "^4.1.7"
+  }
+}
