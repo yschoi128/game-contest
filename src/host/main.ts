@@ -1,3 +1,5 @@
+import QRCode from 'qrcode';
+
 export {};
 const app = document.getElementById('app')!;
 
@@ -86,10 +88,17 @@ function renderLobby(data: any) {
   app.innerHTML = `
     <div class="title">소수결 서바이벌</div>
     <div class="subtitle">스마트폰으로 접속하세요</div>
+    <div id="qr-container" style="margin: 20px 0;"></div>
     <div class="subtitle">${url}</div>
     <div class="count">${lobbyCount}명</div>
     <div class="nicknames">${lobbyNicknames.join(' · ')}</div>
   `;
+
+  QRCode.toCanvas(url, { width: 280, margin: 2, color: { dark: '#ffffff', light: '#1a1a2e' } })
+    .then((canvas: HTMLCanvasElement) => {
+      const container = document.getElementById('qr-container');
+      if (container) container.appendChild(canvas);
+    });
 }
 
 let currentChoices: string[] = [];
