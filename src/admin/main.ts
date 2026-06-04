@@ -36,6 +36,9 @@ function renderControls(state: string) {
     btns.push(`<button class="btn btn-yellow" onclick="doPause()">⏸ 일시정지</button>`);
     btns.push(`<button class="btn btn-yellow" onclick="doInvalidate()">🚫 라운드 무효</button>`);
   }
+  if (state === 'END') {
+    btns.push(`<button class="btn btn-green" onclick="doReset()">🔄 새 게임</button>`);
+  }
   btns.push(`<button class="btn btn-red" onclick="doEnd()">⛔ 강제 종료</button>`);
 
   controlsEl.innerHTML = btns.join('');
@@ -56,6 +59,7 @@ function renderControls(state: string) {
 (window as any).doPause = async () => { await api('/pause', {}); refresh(); };
 (window as any).doInvalidate = async () => { await api('/invalidate', {}); refresh(); };
 (window as any).doEnd = async () => { if (confirm('정말 강제 종료?')) { await api('/end', {}); refresh(); } };
+(window as any).doReset = async () => { if (confirm('새 게임을 시작합니다. 모든 데이터가 초기화됩니다.')) { await api('/reset', {}); refresh(); } };
 
 // Poll status
 refresh();
