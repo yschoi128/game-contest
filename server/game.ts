@@ -154,12 +154,21 @@ function resolveRound(): void {
   const choiceCounts = getVoteCounts();
   const phase = currentRound.phase;
 
-  // Eliminate non-voters
   const voterIds = new Set(votes.keys());
+  const voters = survivors.filter(p => voterIds.has(p.id));
+
+  // Safety: nobody voted at all → invalidate round, everyone survives.
+  // (Without this, eliminating all non-voters would leave 0 survivors and
+  // deadlock the game, since advanceToNextRound requires >=1 alive player.)
+  if (voters.length === 0) {
+    state = (phase === 'final' || phase === 'sudden_death') ? 'FINAL_RESULT' : 'ROUND_RESULT';
+    broadcast({ type: 'round_invalid', reason: '아무도 투표하지 않아 라운드를 무효 처리했습니다' });
+    return;
+  }
+
+  // Eliminate non-voters
   const nonVoters = survivors.filter(p => !voterIds.has(p.id));
   for (const p of nonVoters) Players.eliminatePlayer(p.id, roundNum);
-
-  const voters = survivors.filter(p => voterIds.has(p.id));
 
   if (phase === 'final' || phase === 'sudden_death') {
     resolveFinalRound(voters, choiceCounts);

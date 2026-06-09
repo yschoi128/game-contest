@@ -207,6 +207,30 @@ describe('Game 모듈', () => {
       expect(Players.getAlivePlayers()).toHaveLength(20);
       expect(Game.getState()).toBe('ROUND_RESULT');
     });
+
+    it('일반 라운드에서 아무도 투표하지 않으면 무효 처리 후 전원 생존', () => {
+      setupPlayers(20);
+      Game.startGame();
+      // 아무도 투표하지 않음
+      vi.advanceTimersByTime(22000);
+      // 전원 생존, 데드락 없이 다음 라운드 진행 가능
+      expect(Players.getAlivePlayers()).toHaveLength(20);
+      expect(Game.getState()).toBe('ROUND_RESULT');
+      expect(Game.advanceToNextRound()).toBe(true);
+    });
+
+    it('결승 라운드에서 아무도 투표하지 않으면 무효 처리 후 전원 생존', () => {
+      setupPlayers(4);
+      Game.startGame();
+      // 4명 → 결승 (FINAL_ACTIVE)
+      expect(Game.getState()).toBe('FINAL_ACTIVE');
+      // 아무도 투표하지 않음
+      vi.advanceTimersByTime(12000); // 10초 + 2초 grace
+      // 전원 생존, 생존자 0명 데드락이 발생하지 않음
+      expect(Players.getAlivePlayers()).toHaveLength(4);
+      expect(Game.getState()).toBe('FINAL_RESULT');
+      expect(Game.advanceToNextRound()).toBe(true);
+    });
   });
 
   describe('결승전 규칙', () => {
