@@ -3,6 +3,7 @@ const API = `${location.protocol}//${location.host}/api/admin`;
 const statusEl = document.getElementById('status')!;
 const controlsEl = document.getElementById('controls')!;
 const customInput = document.getElementById('customChoices') as HTMLInputElement;
+const customPromptInput = document.getElementById('customPrompt') as HTMLInputElement;
 
 async function api(path: string, body?: any) {
   const opts: RequestInit = { method: body ? 'POST' : 'GET', headers: { 'Content-Type': 'application/json' } };
@@ -15,6 +16,7 @@ async function refresh() {
   statusEl.innerHTML = `
     <p><strong>상태:</strong> ${s.state}</p>
     <p><strong>라운드:</strong> ${s.roundNum}</p>
+    ${s.currentPrompt ? `<p><strong>질문:</strong> ${s.currentPrompt}</p>` : ''}
     <p><strong>생존자:</strong> ${s.survivorCount}명 / 전체 ${s.totalPlayers}명</p>
     <p><strong>페이즈:</strong> ${s.phase}</p>
     <p><strong>일시정지:</strong> ${s.paused ? '⏸ 예' : '아니오'}</p>
@@ -52,8 +54,10 @@ function renderControls(state: string) {
   if (!raw) return;
   const choices = raw.split(',').map(s => s.trim()).filter(Boolean);
   if (choices.length < 2) return;
-  await api('/next', { choices });
+  const prompt = customPromptInput.value.trim();
+  await api('/next', { choices, prompt });
   customInput.value = '';
+  customPromptInput.value = '';
   refresh();
 };
 (window as any).doPause = async () => { await api('/pause', {}); refresh(); };

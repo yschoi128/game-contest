@@ -55,6 +55,7 @@ export function getGameStatus() {
     survivorCount: Players.getAlivePlayers().length,
     totalPlayers: Players.getPlayerCount(),
     phase: currentRound?.phase ?? getPhase(Players.getAlivePlayers().length),
+    currentPrompt: currentRound?.prompt ?? '',
     currentChoices: currentRound?.choices ?? [],
     paused,
     remainingTime: getRemainingTimeSec(),
@@ -85,7 +86,7 @@ export function startGame(): boolean {
   return true;
 }
 
-export function startNextRound(customChoices?: string[]): void {
+export function startNextRound(customChoices?: string[], customPrompt?: string): void {
   roundNum++;
   votes = new Map();
 
@@ -98,7 +99,7 @@ export function startNextRound(customChoices?: string[]): void {
   }
 
   currentRound = customChoices
-    ? createCustomRound(roundNum, customChoices, survivors.length)
+    ? createCustomRound(roundNum, customChoices, survivors.length, customPrompt ?? '')
     : getNextRound(roundNum, survivors.length, isSuddenDeath);
 
   state = (currentRound.phase === 'final' || currentRound.phase === 'sudden_death')
@@ -107,6 +108,7 @@ export function startNextRound(customChoices?: string[]): void {
   broadcast({
     type: 'round_start',
     roundNum: currentRound.roundNum,
+    prompt: currentRound.prompt,
     choices: currentRound.choices,
     timeLimit: currentRound.timeLimit,
     phase: currentRound.phase,
@@ -291,10 +293,10 @@ export function submitVote(playerId: string, choice: number): true | VoteRejectR
   return true;
 }
 
-export function advanceToNextRound(customChoices?: string[]): boolean {
+export function advanceToNextRound(customChoices?: string[], customPrompt?: string): boolean {
   if (state !== 'ROUND_RESULT' && state !== 'FINAL_RESULT') return false;
   if (Players.getAlivePlayers().length <= 0) return false;
-  startNextRound(customChoices);
+  startNextRound(customChoices, customPrompt);
   return true;
 }
 

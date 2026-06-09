@@ -4,6 +4,7 @@ import questions from '../data/questions.json' with { type: 'json' };
 
 interface Question {
   phase: string;
+  prompt: string;
   choices: string[];
 }
 
@@ -17,23 +18,24 @@ export function getPhase(survivorCount: number): Phase {
 
 export function getNextRound(roundNum: number, survivorCount: number, isSuddenDeath: boolean): RoundData {
   const phase: Phase = isSuddenDeath ? 'sudden_death' : getPhase(survivorCount);
-  const choices = pickQuestion(phase);
+  const question = pickQuestion(phase);
   return {
     roundNum,
-    choices,
+    prompt: question.prompt,
+    choices: question.choices,
     timeLimit: TIME_LIMITS[phase],
     phase,
   };
 }
 
-function pickQuestion(phase: Phase): string[] {
-  const candidates = questions
-    .map((q, i) => ({ ...q, index: i }))
-    .filter(q => q.phase === phase && !usedIndices.has(q.index));
+function pickQuestion(phase: Phase): Question {
+  const candidates = (questions as Question[])
+    .map((q, i) => ({ q, index: i }))
+    .filter(x => x.q.phase === phase && !usedIndices.has(x.index));
 
   if (candidates.length === 0) {
     // All used, reset for this phase
-    questions.forEach((q, i) => {
+    (questions as Question[]).forEach((q, i) => {
       if (q.phase === phase) usedIndices.delete(i);
     });
     return pickQuestion(phase);
@@ -41,13 +43,14 @@ function pickQuestion(phase: Phase): string[] {
 
   const pick = candidates[Math.floor(Math.random() * candidates.length)];
   usedIndices.add(pick.index);
-  return pick.choices;
+  return pick.q;
 }
 
-export function createCustomRound(roundNum: number, choices: string[], survivorCount: number): RoundData {
+export function createCustomRound(roundNum: number, choices: string[], survivorCount: number, prompt = ''): RoundData {
   const phase = getPhase(survivorCount);
   return {
     roundNum,
+    prompt,
     choices,
     timeLimit: TIME_LIMITS[phase],
     phase,

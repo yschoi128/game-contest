@@ -1,110 +1,237 @@
 [
   {
     "phase": "early",
+    "prompt": "더 끔찍한 출퇴근은?",
     "choices": ["월요일 아침 지옥철", "금요일 저녁 폭우 퇴근", "수요일 점심 구내식당 줄"]
   },
   {
     "phase": "early",
+    "prompt": "이 중 하나만 고른다면?",
     "choices": ["로또 1등 즉시 퇴사", "연봉 2배 평생 직장", "주4일제 현재 연봉"]
   },
   {
     "phase": "early",
+    "prompt": "중국집에서 내 선택은?",
     "choices": ["짜장면", "짬뽕", "볶음밥"]
   },
   {
     "phase": "early",
-    "choices": ["여름 휴가 바다", "여름 휴가 산", "여름 휴가 해외"]
+    "prompt": "이번 여름 휴가는 어디로?",
+    "choices": ["바다", "산", "해외"]
   },
   {
     "phase": "early",
+    "prompt": "나는 어떤 인간?",
     "choices": ["아침형 인간", "저녁형 인간", "새벽형 인간"]
   },
   {
     "phase": "early",
+    "prompt": "오늘 한 잔 한다면?",
     "choices": ["소주", "맥주", "와인"]
   },
   {
     "phase": "early",
+    "prompt": "평생 함께할 반려동물은?",
     "choices": ["강아지", "고양이", "물고기"]
   },
   {
     "phase": "early",
+    "prompt": "최고의 근무 형태는?",
     "choices": ["재택근무 영원히", "사무실 출근 영원히", "주3일 재택 + 주2일 출근"]
   },
   {
     "phase": "early",
-    "choices": ["시간 되돌리기 능력", "미래 보기 능력", "순간이동 능력"]
+    "prompt": "딱 하나 갖는다면 어떤 초능력?",
+    "choices": ["시간 되돌리기", "미래 보기", "순간이동"]
   },
   {
     "phase": "early",
+    "prompt": "오늘 저녁 메뉴는?",
     "choices": ["치킨", "피자", "햄버거"]
   },
   {
+    "phase": "early",
+    "prompt": "가장 빡치는 회의 시간은?",
+    "choices": ["월요일 오전", "금요일 오후", "수요일 점심 직후"]
+  },
+  {
+    "phase": "early",
+    "prompt": "100명 앞에서 해야 한다면?",
+    "choices": ["노래", "춤", "개그"]
+  },
+  {
+    "phase": "early",
+    "prompt": "이 능력 중 하나를 갖는다면?",
+    "choices": ["무한 체력", "3시간 수면으로 충분", "먹어도 안 찌는 체질"]
+  },
+  {
+    "phase": "early",
+    "prompt": "분식집 1순위는?",
+    "choices": ["떡볶이", "순대", "튀김"]
+  },
+  {
+    "phase": "early",
+    "prompt": "이별 통보, 받는다면 어떻게?",
+    "choices": ["카톡", "전화", "직접 만나서"]
+  },
+  {
     "phase": "late",
+    "prompt": "둘 중 하나만 고른다면?",
     "choices": ["월급 두 배 + 야근 매일", "현재 월급 + 칼퇴"]
   },
   {
     "phase": "late",
+    "prompt": "딱 한 번의 시간여행, 어디로?",
     "choices": ["10년 전으로 돌아가기", "10년 후 미리 보기"]
   },
   {
     "phase": "late",
-    "choices": ["투명인간 하루", "하늘 날기 하루"]
+    "prompt": "하루 동안 쓸 수 있다면?",
+    "choices": ["투명인간", "하늘 날기"]
   },
   {
     "phase": "late",
+    "prompt": "1년 내내 이 계절만?",
     "choices": ["여름만 1년", "겨울만 1년"]
   },
   {
     "phase": "late",
+    "prompt": "평생 한 가지 음식만?",
     "choices": ["평생 라면만", "평생 김밥만"]
   },
   {
     "phase": "late",
+    "prompt": "1주일 동안 없이 산다면?",
     "choices": ["스마트폰 없는 1주일", "인터넷 없는 1주일"]
   },
   {
     "phase": "late",
+    "prompt": "당신의 선택은?",
     "choices": ["100만원 즉시", "50% 확률로 1000만원"]
   },
   {
     "phase": "late",
+    "prompt": "하나만 가능하다면?",
     "choices": ["과거의 실수 하나 삭제", "미래의 행운 하나 확정"]
   },
   {
+    "phase": "late",
+    "prompt": "더 견딜 만한 직장 옆자리는?",
+    "choices": ["옆자리 수다쟁이", "옆자리 무반응"]
+  },
+  {
+    "phase": "late",
+    "prompt": "차라리 이게 낫다?",
+    "choices": ["읽씹 당하기", "읽씹 하기"]
+  },
+  {
     "phase": "final",
+    "prompt": "직감으로 색을 골라라!",
     "choices": ["빨강", "파랑", "초록"]
   },
   {
     "phase": "final",
+    "prompt": "가위바위보! 무엇을 낼까?",
     "choices": ["가위", "바위", "보"]
   },
   {
     "phase": "final",
+    "prompt": "지금 떠오르는 계절은?",
     "choices": ["봄", "여름", "가을", "겨울"]
   },
   {
     "phase": "final",
+    "prompt": "몇 층 버튼을 누를까?",
     "choices": ["1층", "2층", "3층"]
   },
   {
     "phase": "final",
+    "prompt": "어느 쪽을 선택하겠나?",
     "choices": ["왼쪽", "가운데", "오른쪽"]
   },
   {
     "phase": "final",
+    "prompt": "마음 가는 방향은?",
     "choices": ["동", "서", "남", "북"]
   },
   {
+    "phase": "final",
+    "prompt": "지금 끌리는 과일은?",
+    "choices": ["사과", "바나나", "포도"]
+  },
+  {
+    "phase": "final",
+    "prompt": "밤하늘에서 고른다면?",
+    "choices": ["달", "별", "해"]
+  },
+  {
     "phase": "sudden_death",
+    "prompt": "둘 중 하나! 운명을 골라라",
     "choices": ["1", "2"]
   },
   {
     "phase": "sudden_death",
+    "prompt": "직감으로 찍어라!",
     "choices": ["A", "B"]
   },
   {
     "phase": "sudden_death",
+    "prompt": "O냐 X냐, 지금 결정!",
     "choices": ["○", "×"]
+  },
+  {
+    "phase": "sudden_death",
+    "prompt": "동전 던지기! 어느 쪽?",
+    "choices": ["앞", "뒤"]
+  },
+  {
+    "phase": "early",
+    "prompt": "마크애니에서 가장 기억에 남는 첫 순간은?",
+    "choices": ["입사 첫날", "첫 야근", "첫 회식"]
+  },
+  {
+    "phase": "early",
+    "prompt": "더 떨리는 순간은?",
+    "choices": ["제품 이름 짓기", "고객사 장애 대응", "BMT 데모"]
+  },
+  {
+    "phase": "early",
+    "prompt": "가장 중요한 보안은?",
+    "choices": ["문서 보안", "영상 보안", "모바일 보안"]
+  },
+  {
+    "phase": "early",
+    "prompt": "개발자의 진짜 주적은?",
+    "choices": ["레거시 코드", "기획 변경", "일정 압박"]
+  },
+  {
+    "phase": "early",
+    "prompt": "마크애니의 미래 모습은?",
+    "choices": ["AI 보안 1위", "글로벌 진출", "상장"]
+  },
+  {
+    "phase": "late",
+    "prompt": "그나마 나은 쪽은?",
+    "choices": ["고객사 출장 매주", "사내 장애 콜 매일"]
+  },
+  {
+    "phase": "late",
+    "prompt": "더 끔찍한 상황은?",
+    "choices": ["데모 5분 전 버그 발견", "납품 당일 기능 추가 요청"]
+  },
+  {
+    "phase": "late",
+    "prompt": "당신의 선택은?",
+    "choices": ["야근 후 다음날 재택", "야근 없이 매일 출근"]
+  },
+  {
+    "phase": "late",
+    "prompt": "회사 사랑 인증, 한다면?",
+    "choices": ["마크애니 로고 문신", "회사 슬로건 차 범퍼 스티커"]
+  },
+  {
+    "phase": "late",
+    "prompt": "전 직원 하루 체험, 어느 쪽?",
+    "choices": ["전 직원 개발자 체험", "전 직원 영업 체험"]
   }
 ]

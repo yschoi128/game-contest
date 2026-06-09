@@ -20,6 +20,7 @@ export interface Player {
 
 export interface RoundData {
   roundNum: number;
+  prompt: string;
   choices: string[];
   timeLimit: number;
   phase: Phase;
@@ -38,7 +39,7 @@ export interface VoteResponse {
 // WebSocket messages from server to host/spectators
 export type WsMessage =
   | { type: 'player_joined'; count: number; nickname: string }
-  | { type: 'round_start'; roundNum: number; choices: string[]; timeLimit: number; phase: Phase }
+  | { type: 'round_start'; roundNum: number; prompt: string; choices: string[]; timeLimit: number; phase: Phase }
   | { type: 'vote_update'; counts: number[] }
   | { type: 'round_result'; survivors: string[]; eliminated: string[]; choiceCounts: number[] }
   | { type: 'game_end'; winner: string | null; rankings: { nickname: string; eliminatedRound: number | null }[] }
@@ -52,6 +53,7 @@ export interface GameStatus {
   survivorCount: number;
   totalPlayers: number;
   phase: Phase;
+  currentPrompt: string;
   currentChoices: string[];
   paused: boolean;
 }
@@ -60,6 +62,7 @@ export interface PlayerStatus {
   alive: boolean;
   state: GameState;
   roundNum: number;
+  prompt: string;
   choices: string[];
   timeLimit: number;
   phase: Phase;

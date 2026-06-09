@@ -9,8 +9,8 @@ router.post('/start', (_req, res) => {
 });
 
 router.post('/next', (req, res) => {
-  const { choices } = req.body as { choices?: string[] };
-  const ok = Game.advanceToNextRound(choices);
+  const { choices, prompt } = req.body as { choices?: string[]; prompt?: string };
+  const ok = Game.advanceToNextRound(choices, prompt);
   res.json({ success: ok });
 });
 

@@ -58,6 +58,7 @@ function handleStateSync(msg: any) {
     if (data?.currentRound) {
       renderRound({
         roundNum: data.currentRound.roundNum,
+        prompt: data.currentRound.prompt,
         choices: data.currentRound.choices,
         timeLimit: data.remainingTime ?? data.currentRound.timeLimit,
         phase: data.currentRound.phase,
@@ -105,7 +106,7 @@ let currentChoices: string[] = [];
 let barCounts: number[] = [];
 let isBlind = false;
 
-function renderRound(data: { roundNum: number; choices: string[]; timeLimit: number; phase: string }) {
+function renderRound(data: { roundNum: number; prompt?: string; choices: string[]; timeLimit: number; phase: string }) {
   currentChoices = data.choices;
   barCounts = new Array(data.choices.length).fill(0);
   isBlind = false;
@@ -116,6 +117,7 @@ function renderRound(data: { roundNum: number; choices: string[]; timeLimit: num
   app.innerHTML = `
     ${phaseLabel ? `<div class="phase-badge">${phaseLabel}</div>` : ''}
     <div class="round-num">Round ${data.roundNum}</div>
+    ${data.prompt ? `<div class="prompt">${data.prompt}</div>` : ''}
     <div class="timer" id="timer">${timeLeft}</div>
     <div class="choices" id="choices">
       ${data.choices.map((c, i) => `

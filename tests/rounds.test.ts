@@ -53,6 +53,13 @@ describe('Rounds 모듈', () => {
       expect(round.choices).toHaveLength(2);
       expect(round.timeLimit).toBe(10);
     });
+
+    it('질문 제목(prompt)을 포함한다', () => {
+      resetRounds();
+      const round = getNextRound(1, 50, false);
+      expect(typeof round.prompt).toBe('string');
+      expect(round.prompt.length).toBeGreaterThan(0);
+    });
   });
 
   describe('createCustomRound', () => {
@@ -61,6 +68,16 @@ describe('Rounds 모듈', () => {
       expect(round.choices).toEqual(['A', 'B', 'C']);
       expect(round.roundNum).toBe(5);
       expect(round.phase).toBe('early');
+    });
+
+    it('커스텀 제목을 전달하면 prompt에 반영된다', () => {
+      const round = createCustomRound(5, ['A', 'B'], 20, '직접 고른 질문');
+      expect(round.prompt).toBe('직접 고른 질문');
+    });
+
+    it('제목을 생략하면 빈 문자열이다', () => {
+      const round = createCustomRound(5, ['A', 'B'], 20);
+      expect(round.prompt).toBe('');
     });
   });
 

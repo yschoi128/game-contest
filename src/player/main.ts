@@ -66,16 +66,18 @@ function renderWaiting() {
 }
 
 let currentChoices: string[] = [];
+let currentPrompt = '';
 let voted = false;
 let timerInterval: number | null = null;
 let timeLeft = 0;
 
-function renderPlaying(data: { currentChoices: string[]; state: string; remainingTime?: number }) {
+function renderPlaying(data: { currentChoices: string[]; currentPrompt?: string; state: string; remainingTime?: number }) {
   if (data.currentChoices.length === 0) {
     renderWaiting();
     return;
   }
   currentChoices = data.currentChoices;
+  currentPrompt = data.currentPrompt ?? '';
   voted = false;
   timeLeft = data.remainingTime ?? 0;
   renderChoices();
@@ -86,6 +88,7 @@ function renderChoices() {
   app.innerHTML = `
     <div class="timer" id="timer">${timeLeft > 0 ? timeLeft : ''}</div>
     <div class="nickname-display">${nickname}</div>
+    ${currentPrompt ? `<div class="prompt">${currentPrompt}</div>` : ''}
     ${currentChoices.map((c, i) => `
       <button class="btn btn-choice" data-idx="${i}">${c}</button>
     `).join('')}
@@ -193,6 +196,7 @@ function handleStatusUpdate(res: any) {
     renderWaiting();
   } else if (res.state === 'ROUND_ACTIVE' || res.state === 'ROUND_BLIND' || res.state === 'FINAL_ACTIVE') {
     currentChoices = res.currentChoices;
+    currentPrompt = res.currentPrompt ?? '';
     voted = false;
     timeLeft = res.remainingTime ?? 0;
     renderChoices();
