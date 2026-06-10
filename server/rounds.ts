@@ -1,5 +1,5 @@
 import { Phase, RoundData } from '../src/shared/types.js';
-import { PHASE_THRESHOLDS, TIME_LIMITS } from '../src/shared/constants.js';
+import { PHASE_THRESHOLDS, TIME_LIMITS, RPS_SURVIVOR_COUNT, RPS_CHOICES, RPS_PROMPT } from '../src/shared/constants.js';
 import questions from '../data/questions.json' with { type: 'json' };
 
 interface Question {
@@ -16,7 +16,23 @@ export function getPhase(survivorCount: number): Phase {
   return 'early';
 }
 
+// Fixed rock-paper-scissors duel round used when exactly 2 survivors remain.
+export function createRpsRound(roundNum: number): RoundData {
+  return {
+    roundNum,
+    prompt: RPS_PROMPT,
+    choices: [...RPS_CHOICES],
+    timeLimit: TIME_LIMITS.rps,
+    phase: 'rps',
+  };
+}
+
 export function getNextRound(roundNum: number, survivorCount: number, isSuddenDeath: boolean): RoundData {
+  // 2 survivors → force a rock-paper-scissors duel. This takes precedence over
+  // sudden death so the final 1v1 always reaches a decisive result.
+  if (survivorCount === RPS_SURVIVOR_COUNT) {
+    return createRpsRound(roundNum);
+  }
   const phase: Phase = isSuddenDeath ? 'sudden_death' : getPhase(survivorCount);
   const question = pickQuestion(phase);
   return {
@@ -47,6 +63,11 @@ function pickQuestion(phase: Phase): Question {
 }
 
 export function createCustomRound(roundNum: number, choices: string[], survivorCount: number, prompt = ''): RoundData {
+  // RPS-forced policy: with exactly 2 survivors, ignore custom choices and run
+  // the rock-paper-scissors duel instead (guarantees a decisive 1v1 result).
+  if (survivorCount === RPS_SURVIVOR_COUNT) {
+    return createRpsRound(roundNum);
+  }
   const phase = getPhase(survivorCount);
   return {
     roundNum,

@@ -102,7 +102,7 @@ export function startNextRound(customChoices?: string[], customPrompt?: string):
     ? createCustomRound(roundNum, customChoices, survivors.length, customPrompt ?? '')
     : getNextRound(roundNum, survivors.length, isSuddenDeath);
 
-  state = (currentRound.phase === 'final' || currentRound.phase === 'sudden_death')
+  state = (currentRound.phase === 'final' || currentRound.phase === 'sudden_death' || currentRound.phase === 'rps')
     ? 'FINAL_ACTIVE' : 'ROUND_ACTIVE';
 
   broadcast({
@@ -163,7 +163,7 @@ function resolveRound(): void {
   // (Without this, eliminating all non-voters would leave 0 survivors and
   // deadlock the game, since advanceToNextRound requires >=1 alive player.)
   if (voters.length === 0) {
-    state = (phase === 'final' || phase === 'sudden_death') ? 'FINAL_RESULT' : 'ROUND_RESULT';
+    state = (phase === 'final' || phase === 'sudden_death' || phase === 'rps') ? 'FINAL_RESULT' : 'ROUND_RESULT';
     broadcast({ type: 'round_invalid', reason: '아무도 투표하지 않아 라운드를 무효 처리했습니다' });
     return;
   }
@@ -172,11 +172,51 @@ function resolveRound(): void {
   const nonVoters = survivors.filter(p => !voterIds.has(p.id));
   for (const p of nonVoters) Players.eliminatePlayer(p.id, roundNum);
 
-  if (phase === 'final' || phase === 'sudden_death') {
+  if (phase === 'rps') {
+    resolveRpsRound(voters);
+  } else if (phase === 'final' || phase === 'sudden_death') {
     resolveFinalRound(voters, choiceCounts);
   } else {
     resolveNormalRound(voters, choiceCounts);
   }
+}
+
+// Rock-paper-scissors winner check. Returns true if hand `a` beats hand `b`.
+// Index encoding: 0 = 가위(scissors), 1 = 바위(rock), 2 = 보(paper).
+// 가위 > 보, 바위 > 가위, 보 > 바위.
+function rpsBeats(a: number, b: number): boolean {
+  return (a === 0 && b === 2) || (a === 1 && b === 0) || (a === 2 && b === 1);
+}
+
+// Resolve a 2-survivor rock-paper-scissors duel.
+// - 1 voter (other was eliminated as non-voter): that voter wins.
+// - 2 voters, same hand: draw → rematch (FINAL_RESULT).
+// - 2 voters, different hands: RPS rules decide; loser eliminated, winner wins.
+function resolveRpsRound(voters: { id: string; nickname: string }[]): void {
+  // Only one player voted → the other was already eliminated as a non-voter.
+  if (voters.length === 1) {
+    state = 'END';
+    const winner = voters[0];
+    broadcast({ type: 'game_end', winner: winner.nickname, rankings: Players.getRankings() });
+    return;
+  }
+
+  const [p0, p1] = voters;
+  const c0 = votes.get(p0.id);
+  const c1 = votes.get(p1.id);
+
+  // Same hand → draw → rematch with a fresh RPS round.
+  if (c0 === c1) {
+    state = 'FINAL_RESULT';
+    broadcast({ type: 'round_invalid', reason: '비겼습니다! 가위바위보 재대결' });
+    return;
+  }
+
+  const winner = rpsBeats(c0!, c1!) ? p0 : p1;
+  const loser = winner.id === p0.id ? p1 : p0;
+  Players.eliminatePlayer(loser.id, roundNum);
+  state = 'END';
+  broadcast({ type: 'game_end', winner: winner.nickname, rankings: Players.getRankings() });
 }
 
 function resolveNormalRound(voters: { id: string; nickname: string }[], choiceCounts: number[]): void {

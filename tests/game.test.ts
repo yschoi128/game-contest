@@ -264,6 +264,73 @@ describe('Game 모듈', () => {
     });
   });
 
+  describe('가위바위보 결투 (생존자 2명)', () => {
+    it('생존자 2명이면 rps 라운드(FINAL_ACTIVE)로 시작한다', () => {
+      setupPlayers(2);
+      Game.startGame();
+      expect(Game.getState()).toBe('FINAL_ACTIVE');
+      const status = Game.getGameStatus();
+      expect(status.phase).toBe('rps');
+      expect(status.currentChoices).toEqual(['가위', '바위', '보']);
+    });
+
+    it('다른 손을 내면 가위바위보 승패로 우승자가 결정된다 (가위 vs 보)', () => {
+      setupPlayers(2);
+      Game.startGame();
+      // p0=가위(0), p1=보(2) → 가위가 보를 이김 → p0 우승
+      Game.submitVote('p0', 0);
+      Game.submitVote('p1', 2);
+      vi.advanceTimersByTime(12000); // 10초 + 2초 grace
+      expect(Game.getState()).toBe('END');
+      expect(Players.getPlayer('p0')?.alive).toBe(true);
+      expect(Players.getPlayer('p1')?.alive).toBe(false);
+    });
+
+    it('바위 vs 가위 → 바위 우승', () => {
+      setupPlayers(2);
+      Game.startGame();
+      Game.submitVote('p0', 1); // 바위
+      Game.submitVote('p1', 0); // 가위
+      vi.advanceTimersByTime(12000);
+      expect(Game.getState()).toBe('END');
+      expect(Players.getPlayer('p0')?.alive).toBe(true);
+      expect(Players.getPlayer('p1')?.alive).toBe(false);
+    });
+
+    it('같은 손을 내면 무승부 → 재대결 (FINAL_RESULT, 둘 다 생존)', () => {
+      setupPlayers(2);
+      Game.startGame();
+      Game.submitVote('p0', 1); // 바위
+      Game.submitVote('p1', 1); // 바위
+      vi.advanceTimersByTime(12000);
+      expect(Game.getState()).toBe('FINAL_RESULT');
+      expect(Players.getAlivePlayers()).toHaveLength(2);
+      // 재대결도 rps 라운드여야 함
+      expect(Game.advanceToNextRound()).toBe(true);
+      expect(Game.getGameStatus().phase).toBe('rps');
+    });
+
+    it('한 명만 투표하면 투표자가 자동 우승한다', () => {
+      setupPlayers(2);
+      Game.startGame();
+      Game.submitVote('p0', 0); // p1은 미투표
+      vi.advanceTimersByTime(12000);
+      expect(Game.getState()).toBe('END');
+      expect(Players.getPlayer('p0')?.alive).toBe(true);
+      expect(Players.getPlayer('p1')?.alive).toBe(false);
+    });
+
+    it('둘 다 미투표면 무효 처리 후 둘 다 생존 (재대결 가능)', () => {
+      setupPlayers(2);
+      Game.startGame();
+      // 아무도 투표하지 않음
+      vi.advanceTimersByTime(12000);
+      expect(Game.getState()).toBe('FINAL_RESULT');
+      expect(Players.getAlivePlayers()).toHaveLength(2);
+      expect(Game.advanceToNextRound()).toBe(true);
+    });
+  });
+
   describe('advanceToNextRound', () => {
     it('ROUND_RESULT 상태에서 다음 라운드로 진행한다', () => {
       setupPlayers(20);

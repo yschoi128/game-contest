@@ -9,7 +9,7 @@ export type GameState =
   | 'SUDDEN_DEATH'
   | 'END';
 
-export type Phase = 'early' | 'late' | 'final' | 'sudden_death';
+export type Phase = 'early' | 'late' | 'final' | 'sudden_death' | 'rps';
 
 export interface Player {
   id: string;

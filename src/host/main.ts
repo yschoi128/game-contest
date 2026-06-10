@@ -112,7 +112,7 @@ function renderRound(data: { roundNum: number; prompt?: string; choices: string[
   isBlind = false;
   timeLeft = data.timeLimit;
 
-  const phaseLabel = data.phase === 'final' ? '🏆 결승' : data.phase === 'sudden_death' ? '⚡ 서든데스' : '';
+  const phaseLabel = data.phase === 'rps' ? '⚔️ 가위바위보 결투' : data.phase === 'final' ? '🏆 결승' : data.phase === 'sudden_death' ? '⚡ 서든데스' : '';
 
   app.innerHTML = `
     ${phaseLabel ? `<div class="phase-badge">${phaseLabel}</div>` : ''}

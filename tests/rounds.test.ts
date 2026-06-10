@@ -60,6 +60,21 @@ describe('Rounds 모듈', () => {
       expect(typeof round.prompt).toBe('string');
       expect(round.prompt.length).toBeGreaterThan(0);
     });
+
+    it('생존자 2명이면 가위바위보(rps) 라운드를 강제한다', () => {
+      resetRounds();
+      const round = getNextRound(7, 2, false);
+      expect(round.phase).toBe('rps');
+      expect(round.choices).toEqual(['가위', '바위', '보']);
+      expect(round.timeLimit).toBe(10);
+    });
+
+    it('생존자 2명이면 서든데스보다 rps가 우선한다', () => {
+      resetRounds();
+      const round = getNextRound(8, 2, true);
+      expect(round.phase).toBe('rps');
+      expect(round.choices).toEqual(['가위', '바위', '보']);
+    });
   });
 
   describe('createCustomRound', () => {
@@ -78,6 +93,12 @@ describe('Rounds 모듈', () => {
     it('제목을 생략하면 빈 문자열이다', () => {
       const round = createCustomRound(5, ['A', 'B'], 20);
       expect(round.prompt).toBe('');
+    });
+
+    it('생존자 2명이면 커스텀 선택지를 무시하고 rps를 강제한다', () => {
+      const round = createCustomRound(5, ['A', 'B'], 2, '즉석 질문');
+      expect(round.phase).toBe('rps');
+      expect(round.choices).toEqual(['가위', '바위', '보']);
     });
   });
 
