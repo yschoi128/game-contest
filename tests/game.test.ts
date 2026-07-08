@@ -262,6 +262,41 @@ describe('Game 모듈', () => {
       // 전원 생존
       expect(Players.getAlivePlayers()).toHaveLength(4);
     });
+
+    it('결승에서도 소수결 적용: [1,2,1]이면 소수쪽 2명 생존, 다수쪽 2명 탈락', () => {
+      setupPlayers(4);
+      Game.startGame();
+      expect(Game.getState()).toBe('FINAL_ACTIVE');
+      // 0번:p0(1명), 1번:p1,p2(2명), 2번:p3(1명) → 최소는 0번/2번(각 1명)
+      Game.submitVote('p0', 0);
+      Game.submitVote('p1', 1);
+      Game.submitVote('p2', 1);
+      Game.submitVote('p3', 2);
+      vi.advanceTimersByTime(12000);
+      expect(Game.getState()).toBe('FINAL_RESULT');
+      // 소수(0번/2번) 생존, 다수(1번) 탈락
+      expect(Players.getPlayer('p0')?.alive).toBe(true);
+      expect(Players.getPlayer('p3')?.alive).toBe(true);
+      expect(Players.getPlayer('p1')?.alive).toBe(false);
+      expect(Players.getPlayer('p2')?.alive).toBe(false);
+      expect(Players.getAlivePlayers()).toHaveLength(2);
+      // 2명 남았으므로 다음은 가위바위보
+      expect(Game.advanceToNextRound()).toBe(true);
+      expect(Game.getGameStatus().phase).toBe('rps');
+    });
+
+    it('결승 소수결 결과 생존자가 1명이면 즉시 우승(END)', () => {
+      setupPlayers(3);
+      Game.startGame();
+      expect(Game.getState()).toBe('FINAL_ACTIVE');
+      // 0번:p0(1명), 1번:p1,p2(2명) → 소수 p0만 생존 → 최후 1인 우승
+      Game.submitVote('p0', 0);
+      Game.submitVote('p1', 1);
+      Game.submitVote('p2', 1);
+      vi.advanceTimersByTime(12000);
+      expect(Game.getState()).toBe('END');
+      expect(Players.getPlayer('p0')?.alive).toBe(true);
+    });
   });
 
   describe('가위바위보 결투 (생존자 2명)', () => {

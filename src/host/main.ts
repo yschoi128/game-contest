@@ -189,7 +189,7 @@ function renderResult(data: { survivors: string[]; eliminated: string[]; choiceC
         `).join('')}
       </div>
       <div class="survivors-text">${data.survivors.length}명 생존!</div>
-      ${data.eliminated.length > 0 ? `<div class="eliminated-text">탈락: ${data.eliminated.join(', ')}</div>` : ''}
+      ${data.survivors.length > 0 ? `<div class="eliminated-text" style="color:#4ecdc4;">생존: ${data.survivors.length <= 24 ? data.survivors.join(', ') : data.survivors.slice(0, 24).join(', ') + ` 외 ${data.survivors.length - 24}명`}</div>` : ''}
     </div>
   `;
 }

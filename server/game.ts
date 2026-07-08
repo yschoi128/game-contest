@@ -1,4 +1,4 @@
-import { GameState, RoundData, WsMessage } from '../src/shared/types.js';
+import { GameState, RoundData, WsMessage, Phase } from '../src/shared/types.js';
 import { GRACE_PERIOD, MAX_FINAL_ROUNDS, OPEN_DURATION } from '../src/shared/constants.js';
 import * as Players from './players.js';
 import { getNextRound, getPhase, createCustomRound, resetRounds } from './rounds.js';
@@ -174,10 +174,10 @@ function resolveRound(): void {
 
   if (phase === 'rps') {
     resolveRpsRound(voters);
-  } else if (phase === 'final' || phase === 'sudden_death') {
-    resolveFinalRound(voters, choiceCounts);
   } else {
-    resolveNormalRound(voters, choiceCounts);
+    // 소수결 규칙을 모든 페이즈(early/late/final/sudden_death)에 일관 적용.
+    // 결승에서도 '소수쪽 생존, 다수쪽 탈락'으로 진행하고, 생존자가 1명이 되면 우승.
+    resolveNormalRound(voters, choiceCounts, phase);
   }
 }
 
@@ -219,19 +219,21 @@ function resolveRpsRound(voters: { id: string; nickname: string }[]): void {
   broadcast({ type: 'game_end', winner: winner.nickname, rankings: Players.getRankings() });
 }
 
-function resolveNormalRound(voters: { id: string; nickname: string }[], choiceCounts: number[]): void {
+function resolveNormalRound(voters: { id: string; nickname: string }[], choiceCounts: number[], phase: Phase = 'early'): void {
+  // 결승/서든데스는 결과 상태를 FINAL_RESULT로 유지(운영/화면 흐름 일관성)
+  const resultState: GameState = (phase === 'final' || phase === 'sudden_death') ? 'FINAL_RESULT' : 'ROUND_RESULT';
   const nonZeroCounts = choiceCounts.filter(c => c > 0);
 
   if (nonZeroCounts.length <= 1) {
     // All chose same → revive non-voters, invalidate
     const eliminated = Players.getAllPlayers().filter(p => !p.alive && p.eliminatedRound === roundNum);
     Players.revivePlayers(eliminated.map(p => p.id));
-    state = 'ROUND_RESULT';
+    state = resultState;
     broadcast({ type: 'round_invalid', reason: '전원 같은 선택! 라운드 무효' });
     return;
   }
 
-  const minCount = Math.min(...choiceCounts.filter(c => c > 0));
+  const minCount = Math.min(...nonZeroCounts);
   const survivorChoiceIndices = choiceCounts
     .map((c, i) => ({ count: c, index: i }))
     .filter(x => x.count === minCount)
@@ -251,56 +253,27 @@ function resolveNormalRound(voters: { id: string; nickname: string }[], choiceCo
     Players.revivePlayers(eliminatedIds);
     const nonVoterEliminated = Players.getAllPlayers().filter(p => !p.alive && p.eliminatedRound === roundNum);
     Players.revivePlayers(nonVoterEliminated.map(p => p.id));
-    state = 'ROUND_RESULT';
+    state = resultState;
     broadcast({ type: 'round_invalid', reason: '전원 탈락 방지 - 라운드 무효' });
     return;
   }
 
-  state = 'ROUND_RESULT';
+  // 생존자가 1명이면 즉시 우승 (소수결로 최후의 1인 결정)
+  const aliveNow = Players.getAlivePlayers();
+  if (aliveNow.length === 1) {
+    state = 'END';
+    broadcast({ type: 'game_end', winner: aliveNow[0].nickname, rankings: Players.getRankings() });
+    return;
+  }
+
+  state = resultState;
   broadcast({
     type: 'round_result',
-    survivors: Players.getAlivePlayers().map(p => p.nickname),
+    survivors: aliveNow.map(p => p.nickname),
     eliminated: eliminatedIds.map(id => {
       const p = Players.getPlayer(id);
       return p?.nickname ?? '';
     }),
-    choiceCounts,
-  });
-}
-
-function resolveFinalRound(voters: { id: string; nickname: string }[], choiceCounts: number[]): void {
-  const uniqueIndices = choiceCounts
-    .map((c, i) => ({ count: c, index: i }))
-    .filter(x => x.count === 1)
-    .map(x => x.index);
-
-  // Only declare a winner if exactly one player is a unique chooser
-  if (uniqueIndices.length === 1) {
-    let winnerId: string | null = null;
-    for (const [playerId, choice] of votes) {
-      if (choice === uniqueIndices[0]) {
-        winnerId = playerId;
-        break;
-      }
-    }
-
-    if (winnerId) {
-      for (const player of voters) {
-        if (player.id !== winnerId) Players.eliminatePlayer(player.id, roundNum);
-      }
-      state = 'END';
-      const winner = Players.getPlayer(winnerId);
-      broadcast({ type: 'game_end', winner: winner?.nickname ?? null, rankings: Players.getRankings() });
-      return;
-    }
-  }
-
-  // Multiple unique choosers or no unique chooser → all survive, next round
-  state = 'FINAL_RESULT';
-  broadcast({
-    type: 'round_result',
-    survivors: voters.map(v => v.nickname),
-    eliminated: [],
     choiceCounts,
   });
 }
