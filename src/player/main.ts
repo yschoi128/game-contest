@@ -173,10 +173,17 @@ function handleStatusUpdate(res: any) {
   const player = res.player;
   if (player) alive = player.alive;
 
-  const stateKey = `${res.state}-${res.roundNum}`;
+  // Include `alive` in the key so that a restart (which revives the player
+  // server-side) is detected and the eliminated/winner screen is refreshed
+  // automatically — no manual page reload needed.
+  const stateKey = `${res.state}-${res.roundNum}-${alive}`;
+  if (stateKey === lastState) return;
+  lastState = stateKey;
 
   if (res.state === 'END') {
-    if (pollInterval) clearInterval(pollInterval);
+    // NOTE: keep polling alive here. When the operator picks "같은 인원으로 다시"
+    // the server returns to LOBBY and starts a new game; polling must stay on so
+    // the client transitions out of the winner/eliminated screen by itself.
     if (timerInterval) clearInterval(timerInterval);
     if (alive) renderWinner();
     else renderEliminated();
@@ -188,9 +195,6 @@ function handleStatusUpdate(res: any) {
     renderEliminated();
     return;
   }
-
-  if (stateKey === lastState) return;
-  lastState = stateKey;
 
   if (res.state === 'LOBBY') {
     renderWaiting();
