@@ -68,6 +68,7 @@ function renderWaiting() {
 let currentChoices: string[] = [];
 let currentPrompt = '';
 let voted = false;
+let renderedRound = -1; // 현재 선택지 UI를 그린 라운드 번호 (라운드 바뀔 때만 초기화)
 let timerInterval: number | null = null;
 let timeLeft = 0;
 
@@ -197,14 +198,24 @@ function handleStatusUpdate(res: any) {
   }
 
   if (res.state === 'LOBBY') {
+    renderedRound = -1;
     renderWaiting();
   } else if (res.state === 'ROUND_ACTIVE' || res.state === 'ROUND_BLIND' || res.state === 'FINAL_ACTIVE') {
-    currentChoices = res.currentChoices;
-    currentPrompt = res.currentPrompt ?? '';
-    voted = false;
-    timeLeft = res.remainingTime ?? 0;
-    renderChoices();
-    startPlayerCountdown();
+    if (res.roundNum !== renderedRound) {
+      // 새 라운드: 선택지를 새로 그리고 투표 가능 상태로.
+      renderedRound = res.roundNum;
+      currentChoices = res.currentChoices;
+      currentPrompt = res.currentPrompt ?? '';
+      voted = false;
+      timeLeft = res.remainingTime ?? 0;
+      renderChoices();
+      startPlayerCountdown();
+    } else {
+      // 같은 라운드에서 페이즈만 전환(OPEN→BLIND): 선택을 유지하고 타이머만 재동기화.
+      // (여기서 다시 그리면 이미 고른 선택이 풀려버림)
+      timeLeft = res.remainingTime ?? timeLeft;
+      startPlayerCountdown();
+    }
   } else if (res.state === 'ROUND_RESULT' || res.state === 'FINAL_RESULT') {
     if (timerInterval) clearInterval(timerInterval);
     app.innerHTML = `
