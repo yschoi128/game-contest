@@ -81,7 +81,9 @@ export function startGame(): boolean {
   roundNum = 0;
   finalRoundCount = 0;
   isSuddenDeath = false;
-  resetRounds();
+  // NOTE: 여기서는 문제 사용기록(usedIndices)을 비우지 않는다. 같은 인원으로
+  // 재시작(restartGame)한 뒤 다시 시작해도 이전 게임에서 쓴 문제가 겹치지
+  // 않게 하기 위함. 사용기록은 전체 초기화(resetGame)에서만 비운다.
   startNextRound();
   return true;
 }
@@ -402,6 +404,7 @@ export function restartGame(): void {
   currentTimerDuration = 0;
   remainingMsOnPause = 0;
   Players.reviveAll();
-  resetRounds();
+  // resetRounds()를 호출하지 않는다 → 이전 게임에서 쓴 문제 사용기록을 유지해
+  // 같은 인원으로 다시 하는 게임에서 문제가 중복되지 않게 한다.
   broadcast({ type: 'state_sync', state, data: getFullState() });
 }

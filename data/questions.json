@@ -75,6 +75,61 @@
     "choices": ["카톡", "전화", "직접 만나서"]
   },
   {
+    "phase": "early",
+    "prompt": "주말에 뭐 하지?",
+    "choices": ["집에서 뒹굴기", "밖에서 활동", "친구랑 약속"]
+  },
+  {
+    "phase": "early",
+    "prompt": "여행 스타일은?",
+    "choices": ["계획 빡빡하게", "발길 닿는 대로", "맛집 위주로"]
+  },
+  {
+    "phase": "early",
+    "prompt": "스트레스 풀 때 나는?",
+    "choices": ["먹기", "자기", "놀기"]
+  },
+  {
+    "phase": "early",
+    "prompt": "복권 당첨되면 제일 먼저?",
+    "choices": ["여행", "부동산", "저축"]
+  },
+  {
+    "phase": "early",
+    "prompt": "가장 아까운 낭비는?",
+    "choices": ["시간", "돈", "체력"]
+  },
+  {
+    "phase": "early",
+    "prompt": "회식 메뉴 고른다면?",
+    "choices": ["삼겹살", "회", "치킨"]
+  },
+  {
+    "phase": "early",
+    "prompt": "마크애니에서 가장 기억에 남는 첫 순간은?",
+    "choices": ["입사 첫날", "첫 야근", "첫 회식"]
+  },
+  {
+    "phase": "early",
+    "prompt": "더 떨리는 순간은?",
+    "choices": ["제품 이름 짓기", "고객사 장애 대응", "BMT 데모"]
+  },
+  {
+    "phase": "early",
+    "prompt": "가장 중요한 보안은?",
+    "choices": ["문서 보안", "영상 보안", "모바일 보안"]
+  },
+  {
+    "phase": "early",
+    "prompt": "개발자의 진짜 주적은?",
+    "choices": ["레거시 코드", "기획 변경", "일정 압박"]
+  },
+  {
+    "phase": "early",
+    "prompt": "마크애니의 미래 모습은?",
+    "choices": ["AI 보안 1위", "글로벌 진출", "상장"]
+  },
+  {
     "phase": "late",
     "prompt": "둘 중 하나만 고른다면?",
     "choices": ["월급 두 배 + 야근 매일", "현재 월급 + 칼퇴"]
@@ -125,85 +180,39 @@
     "choices": ["읽씹 당하기", "읽씹 하기"]
   },
   {
-    "phase": "final",
-    "prompt": "직감으로 색을 골라라!",
-    "choices": ["빨강", "파랑", "초록"]
-  },
-
-  {
-    "phase": "final",
-    "prompt": "지금 떠오르는 계절은?",
-    "choices": ["봄", "여름", "가을", "겨울"]
+    "phase": "late",
+    "prompt": "더 나은 선택은?",
+    "choices": ["지금 당장 휴가 3일", "한 달 뒤 휴가 7일"]
   },
   {
-    "phase": "final",
-    "prompt": "몇 층 버튼을 누를까?",
-    "choices": ["1층", "2층", "3층"]
+    "phase": "late",
+    "prompt": "당신이라면?",
+    "choices": ["아는 길로 돌아가기", "모르는 길로 질러가기"]
   },
   {
-    "phase": "final",
-    "prompt": "어느 쪽을 선택하겠나?",
-    "choices": ["왼쪽", "가운데", "오른쪽"]
+    "phase": "late",
+    "prompt": "차라리 이게 낫다!",
+    "choices": ["더위에 시달리기", "추위에 떨기"]
   },
   {
-    "phase": "final",
-    "prompt": "마음 가는 방향은?",
-    "choices": ["동", "서", "남", "북"]
+    "phase": "late",
+    "prompt": "하나만 고른다면?",
+    "choices": ["평생 여름옷만", "평생 겨울옷만"]
   },
   {
-    "phase": "final",
-    "prompt": "지금 끌리는 과일은?",
-    "choices": ["사과", "바나나", "포도"]
+    "phase": "late",
+    "prompt": "더 견딜 만한 건?",
+    "choices": ["느린 인터넷", "잦은 정전"]
   },
   {
-    "phase": "final",
-    "prompt": "밤하늘에서 고른다면?",
-    "choices": ["달", "별", "해"]
+    "phase": "late",
+    "prompt": "둘 중 하나 준다면!",
+    "choices": ["기억력 두 배", "체력 두 배"]
   },
   {
-    "phase": "sudden_death",
-    "prompt": "둘 중 하나! 운명을 골라라",
-    "choices": ["1", "2"]
-  },
-  {
-    "phase": "sudden_death",
-    "prompt": "직감으로 찍어라!",
-    "choices": ["A", "B"]
-  },
-  {
-    "phase": "sudden_death",
-    "prompt": "O냐 X냐, 지금 결정!",
-    "choices": ["○", "×"]
-  },
-  {
-    "phase": "sudden_death",
-    "prompt": "동전 던지기! 어느 쪽?",
-    "choices": ["앞", "뒤"]
-  },
-  {
-    "phase": "early",
-    "prompt": "마크애니에서 가장 기억에 남는 첫 순간은?",
-    "choices": ["입사 첫날", "첫 야근", "첫 회식"]
-  },
-  {
-    "phase": "early",
-    "prompt": "더 떨리는 순간은?",
-    "choices": ["제품 이름 짓기", "고객사 장애 대응", "BMT 데모"]
-  },
-  {
-    "phase": "early",
-    "prompt": "가장 중요한 보안은?",
-    "choices": ["문서 보안", "영상 보안", "모바일 보안"]
-  },
-  {
-    "phase": "early",
-    "prompt": "개발자의 진짜 주적은?",
-    "choices": ["레거시 코드", "기획 변경", "일정 압박"]
-  },
-  {
-    "phase": "early",
-    "prompt": "마크애니의 미래 모습은?",
-    "choices": ["AI 보안 1위", "글로벌 진출", "상장"]
+    "phase": "late",
+    "prompt": "굳이 하나 포기한다면?",
+    "choices": ["아침잠 포기", "저녁 약속 포기"]
   },
   {
     "phase": "late",
@@ -229,5 +238,120 @@
     "phase": "late",
     "prompt": "전 직원 하루 체험, 어느 쪽?",
     "choices": ["전 직원 개발자 체험", "전 직원 영업 체험"]
+  },
+  {
+    "phase": "final",
+    "prompt": "직감으로 색을 골라라!",
+    "choices": ["빨강", "파랑", "초록"]
+  },
+  {
+    "phase": "final",
+    "prompt": "몇 층 버튼을 누를까?",
+    "choices": ["1층", "2층", "3층"]
+  },
+  {
+    "phase": "final",
+    "prompt": "어느 쪽을 선택하겠나?",
+    "choices": ["왼쪽", "가운데", "오른쪽"]
+  },
+  {
+    "phase": "final",
+    "prompt": "지금 끌리는 과일은?",
+    "choices": ["사과", "바나나", "포도"]
+  },
+  {
+    "phase": "final",
+    "prompt": "밤하늘에서 고른다면?",
+    "choices": ["달", "별", "해"]
+  },
+  {
+    "phase": "final",
+    "prompt": "직감으로 숫자 하나!",
+    "choices": ["1", "2", "3"]
+  },
+  {
+    "phase": "final",
+    "prompt": "지금 끌리는 도형은?",
+    "choices": ["△", "○", "□"]
+  },
+  {
+    "phase": "final",
+    "prompt": "마음의 방향을 골라라",
+    "choices": ["위", "가운데", "아래"]
+  },
+  {
+    "phase": "final",
+    "prompt": "지금 떠오르는 온도는?",
+    "choices": ["뜨겁게", "미지근", "차갑게"]
+  },
+  {
+    "phase": "final",
+    "prompt": "직감으로 고른 문은?",
+    "choices": ["1번 문", "2번 문", "3번 문"]
+  },
+  {
+    "phase": "final",
+    "prompt": "지금 끌리는 맛은?",
+    "choices": ["단맛", "짠맛", "매운맛"]
+  },
+  {
+    "phase": "final",
+    "prompt": "손끝이 가리키는 곳은?",
+    "choices": ["하늘", "땅", "바다"]
+  },
+  {
+    "phase": "final",
+    "prompt": "지금 고를 시간대는?",
+    "choices": ["새벽", "정오", "자정"]
+  },
+  {
+    "phase": "final",
+    "prompt": "직감으로 고른 보석은?",
+    "choices": ["다이아", "루비", "사파이어"]
+  },
+  {
+    "phase": "final",
+    "prompt": "지금 손이 가는 카드는?",
+    "choices": ["♠", "♥", "♦"]
+  },
+  {
+    "phase": "sudden_death",
+    "prompt": "둘 중 하나! 운명을 골라라",
+    "choices": ["1", "2"]
+  },
+  {
+    "phase": "sudden_death",
+    "prompt": "직감으로 찍어라!",
+    "choices": ["A", "B"]
+  },
+  {
+    "phase": "sudden_death",
+    "prompt": "O냐 X냐, 지금 결정!",
+    "choices": ["○", "×"]
+  },
+  {
+    "phase": "sudden_death",
+    "prompt": "동전 던지기! 어느 쪽?",
+    "choices": ["앞", "뒤"]
+  },
+  {
+    "phase": "sudden_death",
+    "prompt": "홀이냐 짝이냐!",
+    "choices": ["홀", "짝"]
+  },
+  {
+    "phase": "sudden_death",
+    "prompt": "왼손 오른손, 지금!",
+    "choices": ["왼손", "오른손"]
+  },
+  {
+    "phase": "sudden_death",
+    "prompt": "빨강 파랑, 지금 찍어!",
+    "choices": ["빨강", "파랑"]
+  },
+  {
+    "phase": "sudden_death",
+    "prompt": "위냐 아래냐!",
+    "choices": ["위", "아래"]
   }
 ]

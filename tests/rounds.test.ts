@@ -37,12 +37,11 @@ describe('Rounds 모듈', () => {
       expect(round.timeLimit).toBe(15);
     });
 
-    it('final 페이즈에서 3~4개 선택지와 10초 제한시간을 반환한다', () => {
+    it('final 페이즈에서 3개 선택지와 10초 제한시간을 반환한다', () => {
       resetRounds();
       const round = getNextRound(3, 4, false);
       expect(round.phase).toBe('final');
-      expect(round.choices.length).toBeGreaterThanOrEqual(3);
-      expect(round.choices.length).toBeLessThanOrEqual(4);
+      expect(round.choices).toHaveLength(3);
       expect(round.timeLimit).toBe(10);
     });
 

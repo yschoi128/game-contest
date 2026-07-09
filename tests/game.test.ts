@@ -448,5 +448,29 @@ describe('Game 모듈', () => {
       expect(Game.getGameStatus().survivorCount).toBe(20);
       expect(Game.getGameStatus().roundNum).toBe(1);
     });
+
+    it('재시작한 새 게임은 직전 게임에서 낸 문제를 다시 내지 않는다', () => {
+      setupPlayers(30); // early 페이즈 유지 (>15)
+      Game.startGame();
+      const firstPrompt = Game.getGameStatus().currentPrompt;
+      Game.forceEnd();
+      Game.restartGame();   // 문제 사용기록 유지
+      Game.startGame();
+      const secondPrompt = Game.getGameStatus().currentPrompt;
+      // 직전 게임에서 쓴 문제는 usedIndices에 남아 있어 다시 뽑히지 않음
+      expect(secondPrompt).not.toBe(firstPrompt);
+    });
+
+    it('전체 초기화(resetGame)는 문제 사용기록도 비운다', () => {
+      // resetGame 후에는 모든 문제가 다시 후보가 되므로, 여러 번 시작해도
+      // 예외 없이 정상 동작해야 한다.
+      setupPlayers(30);
+      Game.startGame();
+      Game.forceEnd();
+      Game.resetGame();
+      setupPlayers(30);
+      expect(Game.startGame()).toBe(true);
+      expect(Game.getGameStatus().currentPrompt.length).toBeGreaterThan(0);
+    });
   });
 });
