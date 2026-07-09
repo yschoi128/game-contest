@@ -93,6 +93,7 @@ function renderLobby(data: any) {
     <div class="subtitle">${url}</div>
     <div class="count">${lobbyCount}명</div>
     <div class="nicknames">${lobbyNicknames.join(' · ')}</div>
+    <div class="rules">🗳️ 매 라운드 <b>가장 적게 고른 쪽만 생존!</b> 최후의 1인이 우승</div>
   `;
 
   QRCode.toCanvas(url, { width: 280, margin: 2, color: { dark: '#ffffff', light: '#1a1a2e' } })
