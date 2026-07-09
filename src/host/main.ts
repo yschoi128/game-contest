@@ -32,7 +32,7 @@ function handleMessage(msg: any) {
       renderResult(msg);
       break;
     case 'round_invalid':
-      renderInvalid(msg.reason);
+      renderInvalid(msg);
       break;
     case 'game_end':
       renderWinner(msg);
@@ -194,15 +194,38 @@ function renderResult(data: { survivors: string[]; eliminated: string[]; choiceC
   `;
 }
 
-function renderInvalid(reason: string) {
+function renderInvalid(msg: any) {
   if (timerInterval) clearInterval(timerInterval);
-  app.innerHTML = `<div class="invalid-msg">${reason}</div>`;
+  const reason = typeof msg === 'string' ? msg : msg?.reason ?? '';
+  const rps = typeof msg === 'object' ? msg?.rps : undefined;
+  app.innerHTML = `
+    ${rps ? rpsHandsHtml(rps) : ''}
+    <div class="invalid-msg">${reason}</div>
+  `;
 }
 
-function renderWinner(data: { winner: string | null; rankings: { nickname: string; eliminatedRound: number | null }[] }) {
+// 가위바위보 결투에서 두 참가자가 낸 손을 크게 보여준다.
+const HAND_EMOJI: Record<string, string> = { '가위': '✌️', '바위': '✊', '보': '✋', '미제출': '❌' };
+function rpsHandsHtml(rps: { nickname: string; hand: string }[]): string {
+  const cards = rps.map(h => `
+    <div style="text-align:center;">
+      <div style="font-size:100px;line-height:1.1;">${HAND_EMOJI[h.hand] ?? '❔'}</div>
+      <div style="font-size:32px;font-weight:bold;color:#ffd93d;">${h.hand}</div>
+      <div style="font-size:26px;color:#4ecdc4;margin-top:6px;">${h.nickname}</div>
+    </div>
+  `);
+  return `
+    <div style="display:flex;align-items:center;justify-content:center;gap:40px;margin:20px 0;">
+      ${cards.join('<div style="font-size:44px;color:#ff6b6b;font-weight:bold;">VS</div>')}
+    </div>
+  `;
+}
+
+function renderWinner(data: { winner: string | null; rankings: { nickname: string; eliminatedRound: number | null }[]; rps?: { nickname: string; hand: string }[] }) {
   if (timerInterval) clearInterval(timerInterval);
   if (data.winner) {
     app.innerHTML = `
+      ${data.rps ? rpsHandsHtml(data.rps) : ''}
       <div class="title">🎉 우승자 🎉</div>
       <div class="winner-name">${data.winner}</div>
       <div class="subtitle" style="margin-top:40px">최종 순위</div>

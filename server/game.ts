@@ -1,5 +1,5 @@
 import { GameState, RoundData, WsMessage, Phase } from '../src/shared/types.js';
-import { GRACE_PERIOD, MAX_FINAL_ROUNDS, OPEN_DURATION } from '../src/shared/constants.js';
+import { GRACE_PERIOD, MAX_FINAL_ROUNDS, OPEN_DURATION, RPS_CHOICES } from '../src/shared/constants.js';
 import * as Players from './players.js';
 import { getNextRound, getPhase, createCustomRound, resetRounds } from './rounds.js';
 import { WebSocket } from 'ws';
@@ -175,7 +175,7 @@ function resolveRound(): void {
   for (const p of nonVoters) Players.eliminatePlayer(p.id, roundNum);
 
   if (phase === 'rps') {
-    resolveRpsRound(voters);
+    resolveRpsRound(voters, survivors);
   } else {
     // 소수결 규칙을 모든 페이즈(early/late/final/sudden_death)에 일관 적용.
     // 결승에서도 '소수쪽 생존, 다수쪽 탈락'으로 진행하고, 생존자가 1명이 되면 우승.
@@ -190,16 +190,27 @@ function rpsBeats(a: number, b: number): boolean {
   return (a === 0 && b === 2) || (a === 1 && b === 0) || (a === 2 && b === 1);
 }
 
+// Build the hand each finalist threw (or '미제출' if they didn't vote in time),
+// so the host screen can reveal what both players chose in the RPS duel.
+function buildRpsHands(finalists: { id: string; nickname: string }[]): { nickname: string; hand: string }[] {
+  return finalists.map(p => {
+    const c = votes.get(p.id);
+    return { nickname: p.nickname, hand: c === undefined ? '미제출' : (RPS_CHOICES[c] ?? '?') };
+  });
+}
+
 // Resolve a 2-survivor rock-paper-scissors duel.
 // - 1 voter (other was eliminated as non-voter): that voter wins.
 // - 2 voters, same hand: draw → rematch (FINAL_RESULT).
 // - 2 voters, different hands: RPS rules decide; loser eliminated, winner wins.
-function resolveRpsRound(voters: { id: string; nickname: string }[]): void {
+function resolveRpsRound(voters: { id: string; nickname: string }[], finalists: { id: string; nickname: string }[]): void {
+  const hands = buildRpsHands(finalists);
+
   // Only one player voted → the other was already eliminated as a non-voter.
   if (voters.length === 1) {
     state = 'END';
     const winner = voters[0];
-    broadcast({ type: 'game_end', winner: winner.nickname, rankings: Players.getRankings() });
+    broadcast({ type: 'game_end', winner: winner.nickname, rankings: Players.getRankings(), rps: hands });
     return;
   }
 
@@ -210,7 +221,7 @@ function resolveRpsRound(voters: { id: string; nickname: string }[]): void {
   // Same hand → draw → rematch with a fresh RPS round.
   if (c0 === c1) {
     state = 'FINAL_RESULT';
-    broadcast({ type: 'round_invalid', reason: '비겼습니다! 가위바위보 재대결' });
+    broadcast({ type: 'round_invalid', reason: '비겼습니다! 가위바위보 재대결', rps: hands });
     return;
   }
 
@@ -218,7 +229,7 @@ function resolveRpsRound(voters: { id: string; nickname: string }[]): void {
   const loser = winner.id === p0.id ? p1 : p0;
   Players.eliminatePlayer(loser.id, roundNum);
   state = 'END';
-  broadcast({ type: 'game_end', winner: winner.nickname, rankings: Players.getRankings() });
+  broadcast({ type: 'game_end', winner: winner.nickname, rankings: Players.getRankings(), rps: hands });
 }
 
 function resolveNormalRound(voters: { id: string; nickname: string }[], choiceCounts: number[], phase: Phase = 'early'): void {

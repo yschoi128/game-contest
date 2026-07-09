@@ -42,9 +42,9 @@ export type WsMessage =
   | { type: 'round_start'; roundNum: number; prompt: string; choices: string[]; timeLimit: number; phase: Phase }
   | { type: 'vote_update'; counts: number[] }
   | { type: 'round_result'; survivors: string[]; eliminated: string[]; choiceCounts: number[] }
-  | { type: 'game_end'; winner: string | null; rankings: { nickname: string; eliminatedRound: number | null }[] }
+  | { type: 'game_end'; winner: string | null; rankings: { nickname: string; eliminatedRound: number | null }[]; rps?: { nickname: string; hand: string }[] }
   | { type: 'state_sync'; state: GameState; data: unknown }
-  | { type: 'round_invalid'; reason: string }
+  | { type: 'round_invalid'; reason: string; rps?: { nickname: string; hand: string }[] }
   | { type: 'pause'; paused: boolean };
 
 export interface GameStatus {
