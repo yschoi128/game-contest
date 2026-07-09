@@ -400,5 +400,53 @@ describe('Game 모듈', () => {
       Game.resetGame();
       expect(Game.getState()).toBe('LOBBY');
     });
+
+    it('참가자를 전부 제거한다', () => {
+      setupPlayers(20);
+      Game.startGame();
+      Game.resetGame();
+      expect(Players.getPlayerCount()).toBe(0);
+    });
+  });
+
+  describe('restartGame (같은 인원 유지 재시작)', () => {
+    it('로비로 돌아가되 참가자는 유지한다', () => {
+      setupPlayers(20);
+      Game.startGame();
+      Game.forceEnd();
+      expect(Game.getState()).toBe('END');
+      Game.restartGame();
+      expect(Game.getState()).toBe('LOBBY');
+      // 참가자는 그대로 유지되어 재접속이 필요 없다
+      expect(Players.getPlayerCount()).toBe(20);
+    });
+
+    it('탈락자 전원을 부활시킨다', () => {
+      setupPlayers(20);
+      Game.startGame();
+      // 절반 탈락시킨 뒤 게임 종료
+      for (let i = 0; i < 10; i++) Players.eliminatePlayer(`p${i}`, 1);
+      Game.forceEnd();
+      Game.restartGame();
+      // 전원 부활
+      expect(Players.getAlivePlayers()).toHaveLength(20);
+      for (let i = 0; i < 20; i++) {
+        expect(Players.getPlayer(`p${i}`)?.alive).toBe(true);
+        expect(Players.getPlayer(`p${i}`)?.eliminatedRound).toBeNull();
+      }
+    });
+
+    it('재시작 후 같은 인원으로 새 게임을 시작할 수 있다', () => {
+      setupPlayers(20);
+      Game.startGame();
+      Game.forceEnd();
+      Game.restartGame();
+      // 로비 상태이므로 다시 시작 가능
+      expect(Game.startGame()).toBe(true);
+      expect(Game.getState()).toBe('ROUND_ACTIVE');
+      expect(Game.getGameStatus().totalPlayers).toBe(20);
+      expect(Game.getGameStatus().survivorCount).toBe(20);
+      expect(Game.getGameStatus().roundNum).toBe(1);
+    });
   });
 });

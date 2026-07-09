@@ -46,6 +46,15 @@ export function resetPlayers(): void {
   players.clear();
 }
 
+// Revive every player without removing them (used to restart a game with the
+// same roster: eliminated players become alive again, join list is preserved).
+export function reviveAll(): void {
+  for (const p of players.values()) {
+    p.alive = true;
+    p.eliminatedRound = null;
+  }
+}
+
 export function getRankings(): { nickname: string; eliminatedRound: number | null }[] {
   return [...players.values()]
     .sort((a, b) => {

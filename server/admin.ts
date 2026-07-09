@@ -34,6 +34,11 @@ router.post('/reset', (_req, res) => {
   res.json({ success: true });
 });
 
+router.post('/restart', (_req, res) => {
+  Game.restartGame();
+  res.json({ success: true });
+});
+
 router.get('/status', (_req, res) => {
   res.json(Game.getGameStatus());
 });

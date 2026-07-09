@@ -385,3 +385,23 @@ export function resetGame(): void {
   resetRounds();
   broadcast({ type: 'state_sync', state, data: getFullState() });
 }
+
+// Restart a new game keeping the current roster: revives all players (so the
+// eliminated ones are back in) and returns to LOBBY without dropping anyone.
+// The operator then presses "게임 시작" to begin a fresh game with the same people.
+export function restartGame(): void {
+  if (timer) clearTimeout(timer);
+  state = 'LOBBY';
+  roundNum = 0;
+  currentRound = null;
+  votes = new Map();
+  paused = false;
+  finalRoundCount = 0;
+  isSuddenDeath = false;
+  roundStartedAt = 0;
+  currentTimerDuration = 0;
+  remainingMsOnPause = 0;
+  Players.reviveAll();
+  resetRounds();
+  broadcast({ type: 'state_sync', state, data: getFullState() });
+}
