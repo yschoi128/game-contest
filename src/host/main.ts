@@ -90,7 +90,6 @@ function renderLobby(data: any) {
     <div class="title">소수결 서바이벌</div>
     <div class="subtitle">스마트폰으로 접속하세요</div>
     <div id="qr-container" style="margin: 20px 0;"></div>
-    <div class="subtitle">${url}</div>
     <div class="count">${lobbyCount}명</div>
     <div class="nicknames">${lobbyNicknames.join(' · ')}</div>
     <div class="rules">🗳️ 매 라운드 <b>가장 적게 고른 쪽만 생존!</b> 최후의 1인이 우승</div>
