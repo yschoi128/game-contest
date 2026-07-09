@@ -1,4 +1,5 @@
 export {};
+import { OPEN_DURATION } from '../shared/constants.js';
 const app = document.getElementById('app')!;
 const API = `${location.protocol}//${location.host}`;
 
@@ -71,18 +72,43 @@ let voted = false;
 let renderedRound = -1; // 현재 선택지 UI를 그린 라운드 번호 (라운드 바뀔 때만 초기화)
 let timerInterval: number | null = null;
 let timeLeft = 0;
+let timerDeadline = 0; // 라운드 전체 마감 시각(ms). OPEN/BLIND를 합쳐 한 번만 카운트다운.
 
-function renderPlaying(data: { currentChoices: string[]; currentPrompt?: string; state: string; remainingTime?: number }) {
-  if (data.currentChoices.length === 0) {
+// 서버는 남은 시간을 페이즈별(OPEN 7초 / BLIND 나머지)로 주므로,
+// OPEN 구간에서는 뒤에 이어질 BLIND 시간을 더해 "라운드 전체 남은 시간"을 만든다.
+function totalRemainingSec(res: any): number {
+  const t = res.remainingTime ?? 0;
+  if (res.state === 'ROUND_ACTIVE') return t + Math.max(0, (res.timeLimit ?? 0) - OPEN_DURATION);
+  return t; // ROUND_BLIND / FINAL_ACTIVE: 서버 남은 시간이 곧 전체 남은 시간
+}
+
+function startTimer(res: any) {
+  timerDeadline = Date.now() + totalRemainingSec(res) * 1000;
+  if (timerInterval) clearInterval(timerInterval);
+  tickTimer();
+  timerInterval = window.setInterval(tickTimer, 250);
+}
+
+function tickTimer() {
+  const left = Math.max(0, Math.ceil((timerDeadline - Date.now()) / 1000));
+  timeLeft = left;
+  const el = document.getElementById('timer');
+  if (el) el.textContent = left > 0 ? String(left) : '마감!';
+  if (left <= 0 && timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+}
+
+function renderPlaying(data: any) {
+  if (!data.currentChoices || data.currentChoices.length === 0) {
     renderWaiting();
     return;
   }
   currentChoices = data.currentChoices;
   currentPrompt = data.currentPrompt ?? '';
   voted = false;
-  timeLeft = data.remainingTime ?? 0;
+  renderedRound = data.roundNum ?? renderedRound;
+  timeLeft = totalRemainingSec(data);
   renderChoices();
-  startPlayerCountdown();
+  startTimer(data);
 }
 
 function renderChoices() {
@@ -101,16 +127,6 @@ function renderChoices() {
       btn.addEventListener('click', () => vote(parseInt((btn as HTMLElement).dataset.idx!)));
     });
   }
-}
-
-function startPlayerCountdown() {
-  if (timerInterval) clearInterval(timerInterval);
-  timerInterval = window.setInterval(() => {
-    timeLeft--;
-    const el = document.getElementById('timer');
-    if (el) el.textContent = timeLeft > 0 ? String(timeLeft) : '마감!';
-    if (timeLeft <= 0 && timerInterval) clearInterval(timerInterval);
-  }, 1000);
 }
 
 async function vote(choice: number, retries = 3) {
@@ -154,6 +170,15 @@ function renderWinner() {
     <div class="title">소수결 서바이벌</div>
     <div class="winner">🎉 축하합니다! 🎉</div>
     <div class="nickname-display">${nickname}</div>
+  `;
+}
+
+function renderSurvived() {
+  app.innerHTML = `
+    <div class="title">소수결 서바이벌</div>
+    <div class="nickname-display">${nickname}</div>
+    <div class="winner" style="color:#4ecdc4">✓ 생존!</div>
+    <div class="status">다음 라운드 대기 중...</div>
   `;
 }
 
@@ -207,21 +232,17 @@ function handleStatusUpdate(res: any) {
       currentChoices = res.currentChoices;
       currentPrompt = res.currentPrompt ?? '';
       voted = false;
-      timeLeft = res.remainingTime ?? 0;
+      timeLeft = totalRemainingSec(res);
       renderChoices();
-      startPlayerCountdown();
+      startTimer(res);
     } else {
       // 같은 라운드에서 페이즈만 전환(OPEN→BLIND): 선택을 유지하고 타이머만 재동기화.
-      // (여기서 다시 그리면 이미 고른 선택이 풀려버림)
-      timeLeft = res.remainingTime ?? timeLeft;
-      startPlayerCountdown();
+      // (여기서 다시 그리면 이미 고른 선택이 풀림. 마감 카운트도 한 번만 유지)
+      startTimer(res);
     }
   } else if (res.state === 'ROUND_RESULT' || res.state === 'FINAL_RESULT') {
+    // 여기 도달하면 생존자(탈락자는 위의 !alive 분기에서 처리됨)
     if (timerInterval) clearInterval(timerInterval);
-    app.innerHTML = `
-      <div class="title">소수결 서바이벌</div>
-      <div class="nickname-display">${nickname}</div>
-      <div class="status">결과 확인 중...</div>
-    `;
+    renderSurvived();
   }
 }
